@@ -1,55 +1,678 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Blog</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seguridad de la Información — Blog</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Georgia, serif; background: #fafaf8; color: #1a1a1a; line-height: 1.7; }
-    header { background: #1a1a1a; color: white; padding: 2rem; text-align: center; }
-    header h1 { font-size: 2rem; letter-spacing: 2px; }
-    header p { color: #aaa; font-size: 0.9rem; margin-top: 4px; }
-    nav { background: #2c2c2c; display: flex; justify-content: center; gap: 2rem; padding: 0.75rem; }
-    nav a { color: #ccc; text-decoration: none; font-family: sans-serif; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
-    nav a:hover { color: white; }
-    .container { max-width: 720px; margin: 2rem auto; padding: 0 1.5rem; }
-    article { background: white; border: 1px solid #e8e8e8; border-radius: 4px; padding: 2rem; margin-bottom: 2rem; }
-    .tag { background: #1a1a1a; color: white; font-size: 11px; font-family: sans-serif; padding: 3px 10px; border-radius: 2px; letter-spacing: 1px; text-transform: uppercase; }
-    article h2 { font-size: 1.4rem; margin: 0.75rem 0 0.5rem; }
-    .meta { font-size: 0.8rem; color: #888; font-family: sans-serif; margin-bottom: 1rem; }
-    article p { font-size: 0.95rem; color: #444; }
-    .read-more { display: inline-block; margin-top: 1rem; color: #1a1a1a; font-family: sans-serif; font-size: 0.8rem; font-weight: bold; letter-spacing: 1px; text-decoration: none; border-bottom: 2px solid #1a1a1a; }
-    footer { text-align: center; padding: 2rem; font-size: 0.8rem; color: #999; font-family: sans-serif; border-top: 1px solid #e8e8e8; }
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --card: #161d2e;
+      --accent: #00d4ff;
+      --accent2: #7c3aed;
+      --accent3: #f59e0b;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6rem 2rem 4rem;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+    }
+    .glow-1 {
+      background: radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%);
+      top: -200px; left: -200px;
+      animation: drift1 10s ease-in-out infinite alternate;
+    }
+    .glow-2 {
+      background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%);
+      bottom: -200px; right: -200px;
+      animation: drift2 13s ease-in-out infinite alternate;
+    }
+    @keyframes drift1 { to { transform: translate(60px, 40px); } }
+    @keyframes drift2 { to { transform: translate(-60px, -40px); } }
+
+    .hero-inner {
+      position: relative;
+      max-width: 860px;
+      margin: 0 auto;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(0,212,255,0.3);
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      animation: fadeUp 0.7s 0.2s ease both;
+      flex-wrap: wrap;
+    }
+
+    .hero-meta span { display: flex; align-items: center; gap: 0.4rem; }
+
+    .hero-intro {
+      margin-top: 2.5rem;
+      font-size: 1.15rem;
+      color: #aab4c4;
+      max-width: 620px;
+      animation: fadeUp 0.7s 0.3s ease both;
+      border-left: 3px solid var(--accent);
+      padding-left: 1.2rem;
+    }
+
+    .scroll-hint {
+      margin-top: 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      animation: fadeUp 0.7s 0.5s ease both;
+    }
+
+    .scroll-line {
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      animation: expandLine 1.5s 1s ease both;
+    }
+    @keyframes expandLine { from { width: 0; } to { width: 40px; } }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── MAIN CONTENT ── */
+    .content {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+    }
+
+    /* ── SECTION TITLE ── */
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      line-height: 1.2;
+    }
+
+    p {
+      color: #9aa5b8;
+      margin-bottom: 1.4rem;
+      font-size: 1.02rem;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 4rem 0;
+      opacity: 0.3;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .divider-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+    /* ── CARDS GRID ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.2rem;
+      margin: 2.5rem 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.6rem;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0,212,255,0.25);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    .card:hover::before { opacity: 1; }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 0.9rem;
+      display: block;
+    }
+
+    .card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── HIGHLIGHT BLOCK ── */
+    .highlight {
+      background: linear-gradient(135deg, rgba(0,212,255,0.06), rgba(124,58,237,0.06));
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 20px;
+      padding: 2.2rem;
+      margin: 3rem 0;
+      position: relative;
+    }
+
+    .highlight .quote-mark {
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem;
+      line-height: 0;
+      color: var(--accent);
+      opacity: 0.2;
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+    }
+
+    .highlight p {
+      font-size: 1.15rem;
+      font-style: italic;
+      color: #c8d4e4;
+      padding-left: 1rem;
+      margin: 0;
+    }
+
+    /* ── PILARES / NUMBERED LIST ── */
+    .pillars { margin: 2.5rem 0; }
+
+    .pillar {
+      display: flex;
+      gap: 1.4rem;
+      margin-bottom: 2rem;
+      align-items: flex-start;
+    }
+
+    .pillar-num {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      color: white;
+      box-shadow: 0 4px 20px rgba(0,212,255,0.25);
+    }
+
+    .pillar-text h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: var(--text);
+      margin-bottom: 0.3rem;
+    }
+
+    .pillar-text p { margin: 0; font-size: 0.95rem; }
+
+    /* ── AMENAZAS TABLA ── */
+    .threats {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      font-size: 0.93rem;
+    }
+
+    .threats th {
+      text-align: left;
+      padding: 0.9rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--accent);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+
+    .threats td {
+      padding: 0.9rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      color: #9aa5b8;
+    }
+
+    .threats tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .badge-red   { background: rgba(239,68,68,0.15);  color: #f87171; }
+    .badge-yellow{ background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .badge-green { background: rgba(52,211,153,0.15); color: #34d399; }
+
+    /* ── TIPS FINALES ── */
+    .tips {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 2.5rem 0;
+    }
+
+    .tip {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.3rem;
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      transition: border-color 0.3s;
+    }
+
+    .tip:hover { border-color: rgba(0,212,255,0.3); }
+
+    .tip-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+    .tip-text { font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
+    .tip-text strong { display: block; color: var(--text); margin-bottom: 0.2rem; font-size: 0.95rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    footer .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── PROGRESS BAR ── */
+    #progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      z-index: 999;
+      transition: width 0.1s linear;
+      width: 0%;
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>MI BLOG</h1>
-    <p>Ideas, reflexiones y más</p>
-  </header>
-  <nav>
-    <a href="#">Inicio</a>
-    <a href="#">Artículos</a>
-    <a href="#">Sobre mí</a>
-    <a href="#">Contacto</a>
-  </nav>
-  <div class="container">
-    <article>
-      <span class="tag">Tecnología</span>
-      <h2>Bienvenido a mi primer post</h2>
-      <p class="meta">6 de abril, 2026 · 3 min de lectura</p>
-      <p>Este es el comienzo de mi blog. Aquí compartiré ideas, proyectos y todo lo que me apasiona. ¡Gracias por estar aquí!</p>
-      <a href="#" class="read-more">LEER MÁS →</a>
-    </article>
-    <article>
-      <span class="tag">Vida</span>
-      <h2>Por qué empecé a escribir online</h2>
-      <p class="meta">1 de abril, 2026 · 5 min de lectura</p>
-      <p>Escribir en internet es una de las mejores formas de ordenar tus ideas y conectar con personas que piensan como tú.</p>
-      <a href="#" class="read-more">LEER MÁS →</a>
-    </article>
+
+<div id="progress"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow glow-1"></div>
+  <div class="hero-glow glow-2"></div>
+  <div class="hero-inner">
+    <h1>¿Qué es la <span>Seguridad de la Información</span> y por qué importa?</h1>
+
+    <p class="hero-intro">
+      En un mundo donde todo está conectado, proteger nuestra información ya no es opcional. Descubre qué es, cómo funciona y por qué deberías preocuparte.
+    </p>
+
   </div>
-  <footer>© 2026 Mi Blog · Hecho con GitHub Pages</footer>
+</section>
+
+<!-- CONTENT -->
+<main class="content">
+
+  <!-- INTRO -->
+  <div class="section-label">Introducción</div>
+  <h2>El valor oculto de tus datos</h2>
+  <p>
+    Cada vez que ingresas a una red social, realizas una compra en línea o envías un correo electrónico, estás generando información. Información que tiene valor, que puede ser robada, manipulada o destruida si no se protege correctamente.
+  </p>
+  <p>
+    La <strong style="color:var(--text)">seguridad de la información</strong> es el conjunto de medidas, prácticas y tecnologías diseñadas para proteger los datos de accesos no autorizados, pérdidas o alteraciones. No se trata solo de software antivirus; es una disciplina completa que combina tecnología, procesos y personas.
+  </p>
+
+  <div class="highlight">
+    <span class="quote-mark">"</span>
+    <p>La información es uno de los activos más valiosos de cualquier organización o persona. Protegerla no es un gasto, es una inversión.</p>
+  </div>
+
+  <div class="divider"><div class="divider-dot"></div></div>
+
+  <!-- LOS 3 PILARES -->
+  <div class="section-label">Los 3 Pilares</div>
+  <h2>La Triada CIA</h2>
+  <p>La seguridad de la información se sostiene sobre tres principios fundamentales conocidos como la <strong style="color:var(--accent)">Triada CIA</strong>:</p>
+
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pillar-num">C</div>
+      <div class="pillar-text">
+        <h3>Confidencialidad</h3>
+        <p>Solo las personas autorizadas pueden acceder a la información. Por ejemplo, tu contraseña bancaria solo debe conocerla tú y tu banco.</p>
+      </div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">I</div>
+      <div class="pillar-text">
+        <h3>Integridad</h3>
+        <p>La información no debe ser alterada sin autorización. Un contrato digital no puede modificarse sin dejar rastro de quién lo hizo y cuándo.</p>
+      </div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">D</div>
+      <div class="pillar-text">
+        <h3>Disponibilidad</h3>
+        <p>La información debe estar accesible cuando se necesita. Imagina que un hospital no puede acceder a los registros de un paciente en una emergencia.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="divider-dot"></div></div>
+
+  <!-- AMENAZAS COMUNES -->
+  <div class="section-label">Amenazas</div>
+  <h2>¿De qué nos protegemos?</h2>
+  <p>Las amenazas a la seguridad de la información son variadas y evolucionan constantemente. Estas son las más comunes:</p>
+
+  <div class="cards">
+    <div class="card">
+      <span class="card-icon">🦠</span>
+      <h3>Malware</h3>
+      <p>Software malicioso diseñado para dañar, robar o tomar control de sistemas. Incluye virus, ransomware y spyware.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🎣</span>
+      <h3>Phishing</h3>
+      <p>Engaños por correo o mensajes falsos que simulan ser entidades confiables para robar contraseñas o datos bancarios.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔓</span>
+      <h3>Acceso no autorizado</h3>
+      <p>Cuando alguien obtiene acceso a sistemas o datos sin permiso, ya sea por contraseñas débiles o vulnerabilidades.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">💥</span>
+      <h3>Ataques DDoS</h3>
+      <p>Se satura un servidor con miles de peticiones hasta dejarlo inutilizable, afectando la disponibilidad del servicio.</p>
+    </div>
+  </div>
+
+  <table class="threats">
+    <thead>
+      <tr>
+        <th>Amenaza</th>
+        <th>Frecuencia</th>
+        <th>Nivel de riesgo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Phishing por correo</td>
+        <td>Muy alta</td>
+        <td><span class="badge badge-red">Alto</span></td>
+      </tr>
+      <tr>
+        <td>Contraseñas débiles</td>
+        <td>Alta</td>
+        <td><span class="badge badge-red">Alto</span></td>
+      </tr>
+      <tr>
+        <td>Redes Wi-Fi públicas</td>
+        <td>Media</td>
+        <td><span class="badge badge-yellow">Medio</span></td>
+      </tr>
+      <tr>
+        <td>Software sin actualizar</td>
+        <td>Alta</td>
+        <td><span class="badge badge-yellow">Medio</span></td>
+      </tr>
+      <tr>
+        <td>Pérdida de dispositivo</td>
+        <td>Baja</td>
+        <td><span class="badge badge-green">Bajo</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"><div class="divider-dot"></div></div>
+
+  <!-- POR QUÉ IMPORTA -->
+  <div class="section-label">Importancia</div>
+  <h2>¿Por qué es tan importante hoy?</h2>
+  <p>
+    Vivimos en la era digital: hacemos trámites, trabajamos, estudiamos y nos comunicamos en línea. Esto significa que nuestra información personal, laboral y financiera circula constantemente por internet.
+  </p>
+  <p>
+    Según estudios recientes, en América Latina los ataques cibernéticos aumentaron más de un <strong style="color:var(--accent3)">50%</strong> en los últimos años. Las empresas, los gobiernos y las personas son blanco constante de ciberataques.
+  </p>
+  <p>
+    Para las empresas, una brecha de seguridad puede significar la pérdida de millones de soles, daño a la reputación y problemas legales. Para una persona, puede significar el robo de identidad, pérdida de dinero o exposición de información privada.
+  </p>
+
+  <div class="highlight">
+    <span class="quote-mark">"</span>
+    <p>No preguntes si te van a atacar, sino cuándo. La preparación marca la diferencia entre una crisis y un incidente controlado.</p>
+  </div>
+
+  <div class="divider"><div class="divider-dot"></div></div>
+
+  <!-- BUENAS PRÁCTICAS -->
+  <div class="section-label">Buenas Prácticas</div>
+  <h2>¿Cómo protegerte?</h2>
+  <p>La seguridad no es solo responsabilidad de los expertos. Todos podemos tomar medidas básicas para proteger nuestra información:</p>
+
+  <div class="tips">
+    <div class="tip">
+      <span class="tip-icon">🔑</span>
+      <div class="tip-text">
+        <strong>Usa contraseñas fuertes</strong>
+        Combina letras, números y símbolos. Nunca uses tu fecha de nacimiento.
+      </div>
+    </div>
+    <div class="tip">
+      <span class="tip-icon">🔒</span>
+      <div class="tip-text">
+        <strong>Activa la verificación en 2 pasos</strong>
+        Una capa extra de seguridad al iniciar sesión en tus cuentas.
+      </div>
+    </div>
+    <div class="tip">
+      <span class="tip-icon">🔄</span>
+      <div class="tip-text">
+        <strong>Actualiza tu software</strong>
+        Las actualizaciones corrigen vulnerabilidades que los hackers aprovechan.
+      </div>
+    </div>
+    <div class="tip">
+      <span class="tip-icon">📡</span>
+      <div class="tip-text">
+        <strong>Evita redes Wi-Fi públicas</strong>
+        O usa una VPN si necesitas conectarte desde cafeterías o centros comerciales.
+      </div>
+    </div>
+    <div class="tip">
+      <span class="tip-icon">🧠</span>
+      <div class="tip-text">
+        <strong>Desconfía de lo urgente</strong>
+        Los ataques de phishing generan urgencia. Verifica siempre el remitente.
+      </div>
+    </div>
+    <div class="tip">
+      <span class="tip-icon">💾</span>
+      <div class="tip-text">
+        <strong>Haz copias de seguridad</strong>
+        Guarda tu información importante en la nube o un disco externo.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="divider-dot"></div></div>
+
+  <!-- CONCLUSIÓN -->
+  <div class="section-label">Conclusión</div>
+  <h2>La seguridad es responsabilidad de todos</h2>
+  <p>
+    La seguridad de la información no es un tema exclusivo de ingenieros o técnicos. En el mundo actual, cada persona que usa un teléfono, una computadora o internet tiene la responsabilidad de proteger su información.
+  </p>
+  <p>
+    Conocer los principios básicos, identificar amenazas y adoptar buenas prácticas no requiere ser un experto. Solo requiere conciencia y hábitos digitales saludables.
+  </p>
+  <p>
+    Como futuros profesionales de la tecnología, tenemos además la responsabilidad de ayudar a otros a entender y aplicar estas medidas, construyendo un entorno digital más seguro para todos.
+  </p>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">Bryan/blog</span>
+  2026
+</footer>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    document.getElementById('progress').style.width = progress + '%';
+  });
+
+  // Fade-in on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.card, .tip, .pillar, table').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+</script>
 </body>
 </html>
