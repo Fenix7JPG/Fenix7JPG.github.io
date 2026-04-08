@@ -306,9 +306,11 @@ function drawBracket() {
   const bot = r4.top + r4.height/2 - br.top;
   const mid = (top + bot) / 2;
   const c   = 12;
-  const x   = w - 2;
+
+  // El corchete abre desde la izquierda (x=2) y las puntas apuntan a la DERECHA (x+c)
+  const x   = 2;
   svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-  const d = `M ${x-c} ${top} Q ${x} ${top} ${x} ${top+c} L ${x} ${mid-c} Q ${x} ${mid} ${x-c} ${mid} Q ${x} ${mid} ${x} ${mid+c} L ${x} ${bot-c} Q ${x} ${bot} ${x-c} ${bot}`;
+  const d = `M ${x+c} ${top} Q ${x} ${top} ${x} ${top+c} L ${x} ${mid-c} Q ${x} ${mid} ${x+c} ${mid} Q ${x} ${mid} ${x} ${mid+c} L ${x} ${bot-c} Q ${x} ${bot} ${x+c} ${bot}`;
   path.setAttribute('d', d);
 }
 window.addEventListener('load', drawBracket);
